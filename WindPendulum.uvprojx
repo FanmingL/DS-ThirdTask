@@ -448,6 +448,16 @@
               <FileType>1</FileType>
               <FilePath>.\driver\bsp.c</FilePath>
             </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\driver\key.c</FilePath>
+            </File>
+            <File>
+              <FileName>exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\driver\exti.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

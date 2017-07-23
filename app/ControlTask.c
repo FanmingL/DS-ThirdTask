@@ -24,6 +24,8 @@ static void Task_20ms(void)
 static void Task_50ms(void)
 {
 	
+			LED_TASK();
+		
 }
 
 void ControlTask(void)

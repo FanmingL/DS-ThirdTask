@@ -9,7 +9,7 @@ void LED_Configuration(void)
 	gpio.GPIO_Pin = GPIO_Pin_0;
 	gpio.GPIO_PuPd = GPIO_PuPd_UP;
 	gpio.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOB,&gpio);
-	GPIO_ResetBits(GPIOB,GPIO_Pin_0);
+	GPIO_Init(GPIOB, &gpio);
+	//GPIO_ResetBits(GPIOA,GPIO_Pin_5);
 }
 

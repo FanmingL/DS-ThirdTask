@@ -8,7 +8,10 @@ void BSP_Init(void)
 	TIM2_Configuration();
 	TIM6_Configuration();
 	LED_Configuration();
+	key_init();
+	InnerLoopInit();
 	TIM6_Start();
+	
 }
 
 

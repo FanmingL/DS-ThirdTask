@@ -11,5 +11,8 @@
 #include "pid.h"
 #include "mymath.h"
 #include "bsp.h"
+#include "key.h"
+#include "exti.h"
+
 
 #endif

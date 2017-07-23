@@ -1,12 +1,26 @@
 #include "main.h"
-
-int x=0,y=0;							//X_MAX=240,Y_MAX=320
-void EXTI0_IRQHandler(void)
+u16 KEY1_PRESS_FLAG,KEY3_PRESS_FLAG,KEY2_PRESS_FLAG=0;
+void EXTI9_5_IRQHandler(void)
 {		 
-	LCD_Clear(BLACK);
-	x=0;y=0;
-	EXTI_ClearITPendingBit(EXTI_Line0);//清除LINE2上的中断标志位 
+	if(EXTI_GetITStatus(EXTI_Line9)){
+				KEY2_PRESS_FLAG=!(KEY2);
+		EXTI_ClearITPendingBit(EXTI_Line9);}
+		if(EXTI_GetITStatus(EXTI_Line7)){
+				KEY3_PRESS_FLAG=!(KEY3);
+		EXTI_ClearITPendingBit(EXTI_Line7);
+	}
 }
+
+void EXTI15_10_IRQHandler(void)
+{		 
+	if(EXTI_GetITStatus(EXTI_Line10)){
+				KEY1_PRESS_FLAG=!(KEY1);
+		EXTI_ClearITPendingBit(EXTI_Line10);
+	}
+}
+
+
+
 
 
 

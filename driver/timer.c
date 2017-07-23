@@ -83,7 +83,7 @@ void TIM6_DAC_IRQHandler(void)									//TIM6的回调函数1ms调用一次，用于精确进入
 	  {
 			TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
 			TIM_ClearFlag(TIM6, TIM_FLAG_Update);
-		//	ControlTask();
+			ControlTask();
     }
 
 }
