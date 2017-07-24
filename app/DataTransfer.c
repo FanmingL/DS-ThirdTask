@@ -123,8 +123,14 @@ void DataTransferTask(u32 sys_time)
 	{
 		if (send_pid1){ANO_DT_Send_PID(1,PitchP_arg.kp,PitchP_arg.ki,PitchP_arg.kd,
 																			PitchS_arg.kp,PitchS_arg.ki,PitchS_arg.kd,
-																			Chassis_arg.kp,Chassis_arg.ki,Chassis_arg.kd);
+																			RollP_arg.kp,RollP_arg.ki,RollP_arg.kd);
 		send_pid1=0;}
+		else if(send_pid2){
+		ANO_DT_Send_PID(2,RollS_arg.kp,RollS_arg.ki,RollS_arg.kd,
+																			Motor_arg.kp,Motor_arg.ki,Motor_arg.kd,
+																			0,0,0);
+		send_pid2=0;
+		}
 	}
 	else {
 		if (send_check){
@@ -214,6 +220,10 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 			Mag_CALIBRATED = 1;		
 
 		}
+		else if (*(data_buf+4)==0X05)
+		{
+			appTosave=1;
+		}
 		else if((*(data_buf+4)>=0X021)&&(*(data_buf+4)<=0X26))
 		{
 		}
@@ -232,6 +242,7 @@ if(*(data_buf+2)==0X02)
 		if(*(data_buf+4)==0X01)
 		{
 			send_pid1 = 1;
+			send_pid2 = 1;
 		}
 		if(*(data_buf+4)==0XA1)	
 		{
@@ -246,9 +257,19 @@ if(*(data_buf+2)==0X02)
         PitchS_arg.kp = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
         PitchS_arg.ki = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
         PitchS_arg.kd = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-        Chassis_arg.kp 	= 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
-        Chassis_arg.ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
-        Chassis_arg.kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+        RollP_arg.kp 	= 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
+        RollP_arg.ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
+        RollP_arg.kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+    }
+		 if(*(data_buf+2)==0X11)								//PID2
+    {
+        RollS_arg.kp  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+        RollS_arg.ki  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+        RollS_arg.kd  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+        Motor_arg.kp = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+        Motor_arg.ki = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+        Motor_arg.kd = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+   
     }
 			if(*(data_buf+2)==0X03)
 	{
