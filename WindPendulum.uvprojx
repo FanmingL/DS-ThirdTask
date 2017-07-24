@@ -449,14 +449,34 @@
               <FilePath>.\driver\bsp.c</FilePath>
             </File>
             <File>
-              <FileName>key.c</FileName>
+              <FileName>ak8975.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\driver\key.c</FilePath>
+              <FilePath>.\driver\ak8975.c</FilePath>
             </File>
             <File>
-              <FileName>exti.c</FileName>
+              <FileName>bsp_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\driver\exti.c</FilePath>
+              <FilePath>.\driver\bsp_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\driver\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_soft.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\driver\i2c_soft.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpu6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\driver\mpu6050.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\driver\pwm.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -487,6 +507,16 @@
               <FileName>pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\app\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\app\imu.c</FilePath>
+            </File>
+            <File>
+              <FileName>parameter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\app\parameter.c</FilePath>
             </File>
           </Files>
         </Group>

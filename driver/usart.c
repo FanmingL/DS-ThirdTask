@@ -1,5 +1,4 @@
 #include "main.h"
-#include "stdio.h"
 /*----------USART1---PA9---PA10----*/
 /*----------USART2---PD5---PD6-----*/
 /************************************/
@@ -12,8 +11,7 @@ u8 count1=0;
 /***********************************/
 
 void Usart1_Init(u32 br_num)
-{ 
-	GPIO_InitTypeDef GPIO_InitStructure;
+{  GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	DMA_InitTypeDef DMA_InitStructure;
@@ -283,23 +281,23 @@ void Usart2_Send_DMA(unsigned char *DataToSend ,u8 data_num)
 	DMA_Cmd(DMA1_Stream6, ENABLE);       
 }
 
-//void Usart2_SendByte(unsigned char DataToSend)
-//{
+void Usart2_SendByte(unsigned char DataToSend)
+{
 
-//		Tx2Buffer[count2++] = DataToSend;
-
-
-//	if(!(USART2->CR1 & USART_CR1_TXEIE))
-//	{
-//		USART_ITConfig(USART2, USART_IT_TXE, ENABLE); 
-//	}
-
-//}
+		Tx2Buffer[count2++] = DataToSend;
 
 
-//int fputc(int ch, FILE *f)
-//{
-//		Usart2_SendByte((uint8_t)ch);
-//    return ch;
-//}
+	if(!(USART2->CR1 & USART_CR1_TXEIE))
+	{
+		USART_ITConfig(USART2, USART_IT_TXE, ENABLE); 
+	}
+
+}
+
+
+int fputc(int ch, FILE *f)
+{
+		Usart2_SendByte((uint8_t)ch);
+    return ch;
+}
 

@@ -1,7 +1,6 @@
 #include "main.h"
-
-
-void TIM2_Configuration(void)	
+/*----TIM2---TIM6-----*/
+void TIM2_Configuration(void)										//TIM2作为系统时钟，CNT寄存器中的为计数开始到现在的微秒数
 {
     TIM_TimeBaseInitTypeDef tim;
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
@@ -13,44 +12,30 @@ void TIM2_Configuration(void)
     TIM_TimeBaseInit(TIM2, &tim);
     TIM_Cmd(TIM2,ENABLE);	
 }
-void TIM2_IRQHandler()
+
+void TIM2_IRQHandler(void)										
 {
-	if (TIM_GetITStatus(TIM2,TIM_IT_Update)!= RESET) 
+	  if (TIM_GetITStatus(TIM2,TIM_IT_Update)!= RESET) 
 		{
 			  TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
         TIM_ClearFlag(TIM2, TIM_FLAG_Update);
 		}
-}
+} 
 
-void delay_us(uint32_t us)										//用TIM2的计数值来做到精确延时
+void Delay_us(uint32_t us)										//用TIM2的计数值来做到精确延时
 {
     uint32_t now = Get_Time_Micros();
     while (Get_Time_Micros() - now < us);
 }
 
-void delay_ms(uint32_t ms)
+void Delay_ms(uint32_t ms)
 {
     while (ms--)
-        delay_us(1000);
+        Delay_us(1000);
 }
 
 
-uint32_t GetInnerLoop(int loop)								//用于获得精确的函数调用的周期
-{
-	static uint32_t Time[2][INERLOOPLENGTH]={0};//Time[0] is the last time, Time[1] is the new time;
-	Time[0][loop] = Time[1][loop];
-	Time[1][loop] = Get_Time_Micros();
-	return Time[1][loop]-Time[0][loop];
-}
 
-void InnerLoopInit(void)
-{
-	int i=0;
-	for (i=0;i<INERLOOPLENGTH;i++)
-	{
-		GetInnerLoop(i);
-	}
-}	
 void TIM6_Configuration(void)							
 {
     TIM_TimeBaseInitTypeDef  tim;
@@ -83,7 +68,22 @@ void TIM6_DAC_IRQHandler(void)									//TIM6的回调函数1ms调用一次，用于精确进入
 	  {
 			TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
 			TIM_ClearFlag(TIM6, TIM_FLAG_Update);
-			ControlTask();
+			ControlLoop();
     }
 
+}
+void InnerLoopInit(void)
+{
+	int i=0;
+	for (i=0;i<INERLOOPLENGTH;i++)
+	{
+		GetInnerLoop(i);
+	}
+}	
+uint32_t GetInnerLoop(int loop)								//用于获得精确的函数调用的周期
+{
+	static uint32_t Time[2][20]={0};//Time[0] is the last time, Time[1] is the new time;
+	Time[0][loop] = Time[1][loop];
+	Time[1][loop] = Get_Time_Micros();
+	return Time[1][loop]-Time[0][loop];
 }

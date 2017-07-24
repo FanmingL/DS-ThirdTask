@@ -1,6 +1,7 @@
-#ifndef _CONTROLTASK_H_
-#define _CONTROLTASK_H_
-extern float position_out,speed_out,chassis_out,exp_angle;
-void ControlTask(void);
+#ifndef _CONTROL_TASK_H_
+#define _CONTROL_TASK_H_
+
+void ControlLoop(void);
+
 #endif
 
