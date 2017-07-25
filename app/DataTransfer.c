@@ -131,6 +131,8 @@ void DataTransferTask(u32 sys_time)
 																			0,0,0);
 		send_pid2=0;
 		}
+	}else if ((sys_time+5)%10==0){
+		ANO_DT_Send_MotoPWM((short)my_abs(motor1_out),(short)my_abs(motor2_out),(short)my_abs(motor1_out),(short)my_abs(motor2_out),0,0,0,0);
 	}
 	else {
 		if (send_check){
@@ -327,3 +329,41 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
 
 	Usart2_Send(data_to_send, _cnt);
 }
+
+void ANO_DT_Send_MotoPWM(u16 m_1,u16 m_2,u16 m_3,u16 m_4,u16 m_5,u16 m_6,u16 m_7,u16 m_8)
+{
+	u8 _cnt=0;
+	u8 sum = 0 ;
+	u8 i;
+	data_to_send[_cnt++]=0xAA;
+	data_to_send[_cnt++]=0xAA;
+	data_to_send[_cnt++]=0x06;
+	data_to_send[_cnt++]=0;
+	
+	data_to_send[_cnt++]=BYTE1(m_1);
+	data_to_send[_cnt++]=BYTE0(m_1);
+	data_to_send[_cnt++]=BYTE1(m_2);
+	data_to_send[_cnt++]=BYTE0(m_2);
+	data_to_send[_cnt++]=BYTE1(m_3);
+	data_to_send[_cnt++]=BYTE0(m_3);
+	data_to_send[_cnt++]=BYTE1(m_4);
+	data_to_send[_cnt++]=BYTE0(m_4);
+	data_to_send[_cnt++]=BYTE1(m_5);
+	data_to_send[_cnt++]=BYTE0(m_5);
+	data_to_send[_cnt++]=BYTE1(m_6);
+	data_to_send[_cnt++]=BYTE0(m_6);
+	data_to_send[_cnt++]=BYTE1(m_7);
+	data_to_send[_cnt++]=BYTE0(m_7);
+	data_to_send[_cnt++]=BYTE1(m_8);
+	data_to_send[_cnt++]=BYTE0(m_8);
+	
+	data_to_send[3] = _cnt-4;
+
+	for(i=0;i<_cnt;i++)
+		sum += data_to_send[i];
+	
+	data_to_send[_cnt++]=sum;
+	
+	Usart2_Send(data_to_send, _cnt);
+}
+

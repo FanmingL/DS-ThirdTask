@@ -16,7 +16,9 @@ void All_Init(void)
 	MPU6050_Init(20); 																	//mpu6050初始化，低通频率20Hz
 	Delay_ms(100);																			//磁力计初始化前的延时
 	ak8975_ok = !(ANO_AK8975_Run());										//磁力计初始化
+	InnerLoopInit();																		//内环周期初始化
 	TIM6_Start();																				//ControlLoop开始
+	
 }
 
 

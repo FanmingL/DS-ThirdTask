@@ -33,7 +33,8 @@ extern _PID_val_st Motor3_val;
 extern _PID_val_st	Motor4_val;
 extern _PID_val_st PitchS_val;
 extern _PID_val_st PitchP_val;
-
+extern _PID_val_st RollS_val;
+extern _PID_val_st RollP_val;
 void Para_ResetToFactorySetup(void);
 void Param_SaveAccelOffset(xyz_f_t *offset);
 void Param_SaveGyroOffset(xyz_f_t *offset);

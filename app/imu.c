@@ -164,9 +164,9 @@ void IMUupdate(float half_T,float gx, float gy, float gz, float ax, float ay, fl
 	
 	if( reference_v.z > 0.0f )
 	{
-		if( 1  )
+		if( NS!=Stop )
 		{
-			yaw_correct = Kp *0.2f *To_180_degrees(yaw_mag - Yaw);//0.2
+			yaw_correct = Kp *0.2f *To_180_degrees(yaw_mag - Yaw);
 			//已经解锁，只需要低速纠正。
 		}
 		else
@@ -207,12 +207,12 @@ void IMUupdate(float half_T,float gx, float gy, float gz, float ax, float ay, fl
 	
 
 	*rol = fast_atan2(2*(ref_q[0]*ref_q[1] + ref_q[2]*ref_q[3]),1 - 2*(ref_q[1]*ref_q[1] + ref_q[2]*ref_q[2])) *57.3f;
-	*pit = asinf((2*(ref_q[1]*ref_q[3] - ref_q[0]*ref_q[2])))*57.3f;
-	//*yaw = fast_atan2(2*(-ref_q[1]*ref_q[2] - ref_q[0]*ref_q[3]), 2*(ref_q[0]*ref_q[0] + ref_q[1]*ref_q[1]) - 1) *57.3f  ;// 
-	*yaw = yaw_mag;
+	*pit = asin(2*(ref_q[1]*ref_q[3] - ref_q[0]*ref_q[2])) *57.3f;
+	
+	*yaw = fast_atan2(2*(-ref_q[1]*ref_q[2] - ref_q[0]*ref_q[3]), 2*(ref_q[0]*ref_q[0] + ref_q[1]*ref_q[1]) - 1) *57.3f  ;// 
+	//*yaw = yaw_mag;
 
 }
-
 
 /******************* (C) COPYRIGHT 2014 ANO TECH *****END OF FILE************/
 

@@ -13,6 +13,8 @@ _PID_val_st	Motor4_val;
 
 _PID_val_st PitchS_val;
 _PID_val_st PitchP_val;
+_PID_val_st RollS_val;
+_PID_val_st RollP_val;
 
 
 #define PositionPitch_P 0.0f

@@ -1,13 +1,13 @@
 #include "main.h"
 /*
-				USART4   Tx    PA0
-				USART4   Rx    PA1
-				WAVE     Tx    PC12
-				WAVE     Rx		 PD2
-				MOTOR1         PE14
-				MOTOR2         PE13
-				MOTOR3         PE11
-				MOTOR4         PE9
+				USART4   Tx    PA0				Motor3
+				USART4   Rx    PA1				Motor4
+				WAVE     Tx    PC12				Motor1
+				WAVE     Rx		 PD2				Motor2
+				MOTOR1         PE14				Motor1
+				MOTOR2         PE13				Motor2
+				MOTOR3         PE11				Motor3
+				MOTOR4         PE9				Motor4
 */
 void GPIO_Configuration(void)
 {
@@ -37,5 +37,52 @@ void GPIO_Configuration(void)
 	gpio.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_11|GPIO_Pin_13|GPIO_Pin_14;
 	GPIO_Init(GPIOE,&gpio);
 	GPIO_ResetBits(GPIOE,gpio.GPIO_Pin);
+	
+	All_Positive();
+}
+
+void SetAllPWM(short motor1_pwm,short motor2_pwm,short motor3_pwm,short motor4_pwm)
+{
+	motor1_pwm=LIMIT(motor1_pwm,-1000,1000);
+	motor2_pwm=LIMIT(motor2_pwm,-1000,1000);
+	motor3_pwm=LIMIT(motor3_pwm,-1000,1000);
+	motor4_pwm=LIMIT(motor4_pwm,-1000,1000);
+	if (motor1_pwm<0)
+	{ 
+			MOTOR1_Negtive();
+			motor1_pwm=-motor1_pwm;
+	}
+	else
+	{
+			MOTOR1_Positive();
+	}
+	if (motor2_pwm<0)
+	{ 
+			MOTOR2_Negtive();
+			motor2_pwm=-motor1_pwm;
+	}
+	else
+	{
+			MOTOR2_Positive();
+	}
+	if (motor3_pwm<0)
+	{ 
+			MOTOR3_Negtive();
+			motor3_pwm=-motor1_pwm;
+	}
+	else
+	{
+			MOTOR3_Positive();
+	}
+	if (motor4_pwm<0)
+	{ 
+			MOTOR4_Negtive();
+			motor4_pwm=-motor1_pwm;
+	}
+	else
+	{
+			MOTOR4_Positive();
+	}
+	SetPWMOut(motor1_pwm,motor2_pwm,motor3_pwm,motor4_pwm);
 
 }
