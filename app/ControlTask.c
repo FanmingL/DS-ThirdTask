@@ -16,14 +16,14 @@ pitch<0 	1	->								<-3			pitch>0
 
 */
 
-float exp_pitch=0,exp_roll=0;
+float exp_pitch=4.0f,exp_roll=0;
 float pitch_position_out=0,pitch_speed_out=0,
 			roll_position_out=0,roll_speed_out=0,
 			motor1_out=0,motor2_out=0,motor3_out=0,motor4_out=0;
 static void ControlAngle(float T)
 {
 	if (NS==Task1){
-	pitch_position_out=PID_calculate( T,            //周期（单位：秒）
+	pitch_position_out=-PID_calculate( T,            //周期（单位：秒）
 										0,				//前馈值
 										exp_pitch,				//期望值（设定值）
 										Pitch,			//反馈值（）
@@ -34,10 +34,10 @@ static void ControlAngle(float T)
 	motor1_out=PID_calculate( T,            //周期（单位：秒）
 										0,				//前馈值
 										pitch_position_out,				//期望值（设定值）
-										-mpu6050.Gyro_deg.y,			//反馈值（）
+										mpu6050.Gyro_deg.y,			//反馈值（）
 										&PitchS_arg, //PID参数结构体
 										&PitchS_val,	//PID数据结构体
-										30			//integration limit，积分限幅
+										10			//integration limit，积分限幅
 										 );
 		
 	roll_position_out=PID_calculate( T,            //周期（单位：秒）
@@ -60,20 +60,20 @@ static void ControlAngle(float T)
 	}
 	else if (NS==Task2)
 	{
-	
+		SetAllPWM(0,-300,0,0);
 	}
 	else if (NS==Task3)
 	{
-	
+	SetAllPWM(000,0,-300,0);
 	
 	}
 	else if (NS==Task4)
 	{
-	
+	SetAllPWM(0,0,0,1000);
 	}
 	else if (NS==Task5)
 	{
-	
+	SetAllPWM(300,0,0,0);
 	
 	}
 	else if (NS==Task6) 
@@ -83,6 +83,11 @@ static void ControlAngle(float T)
 	else if (NS==Stop)
 	{
 	SetAllPWM(0,0,0,0);
+	}
+	else if (NS==Test)
+	{
+		SetAllPWM(300,300,300,300);
+	
 	}
 }
 

@@ -2,7 +2,7 @@
 /*----TIM2---TIM6-----*/
 void TIM2_Configuration(void)										//TIM2作为系统时钟，CNT寄存器中的为计数开始到现在的微秒数
 {
-    TIM_TimeBaseInitTypeDef tim;
+   TIM_TimeBaseInitTypeDef tim;
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
     tim.TIM_Period = 0xFFFFFFFF;
     tim.TIM_Prescaler = 84 - 1;	 //1M 的时钟  

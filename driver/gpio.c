@@ -59,7 +59,7 @@ void SetAllPWM(short motor1_pwm,short motor2_pwm,short motor3_pwm,short motor4_p
 	if (motor2_pwm<0)
 	{ 
 			MOTOR2_Negtive();
-			motor2_pwm=-motor1_pwm;
+			motor2_pwm=-motor2_pwm;
 	}
 	else
 	{
@@ -68,7 +68,7 @@ void SetAllPWM(short motor1_pwm,short motor2_pwm,short motor3_pwm,short motor4_p
 	if (motor3_pwm<0)
 	{ 
 			MOTOR3_Negtive();
-			motor3_pwm=-motor1_pwm;
+			motor3_pwm=-motor3_pwm;
 	}
 	else
 	{
@@ -77,7 +77,7 @@ void SetAllPWM(short motor1_pwm,short motor2_pwm,short motor3_pwm,short motor4_p
 	if (motor4_pwm<0)
 	{ 
 			MOTOR4_Negtive();
-			motor4_pwm=-motor1_pwm;
+			motor4_pwm=-motor4_pwm;
 	}
 	else
 	{

@@ -137,6 +137,7 @@ void DataTransferTask(u32 sys_time)
 	else {
 		if (send_check){
 		send_check = 0;
+				ANO_DT_Send_Check(checkdata_to_send,checksum_to_send);
 		}
 	
 	}
@@ -262,6 +263,12 @@ if(*(data_buf+2)==0X02)
         RollP_arg.kp 	= 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
         RollP_arg.ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
         RollP_arg.kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+				if(send_check == 0)
+				{
+					send_check = 1;
+					checkdata_to_send = *(data_buf+2);
+					checksum_to_send = sum;
+				}
     }
 		 if(*(data_buf+2)==0X11)								//PID2
     {
@@ -271,12 +278,75 @@ if(*(data_buf+2)==0X02)
         Motor_arg.kp = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
         Motor_arg.ki = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
         Motor_arg.kd = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-   
+						if(send_check == 0)
+				{
+					send_check = 1;
+					checkdata_to_send = *(data_buf+2);
+					checksum_to_send = sum;
+				}
     }
+	
+    
+    if(*(data_buf+2)==0X12)								//PID3
+    {	
+       	if(send_check == 0)
+				{
+					send_check = 1;
+					checkdata_to_send = *(data_buf+2);
+					checksum_to_send = sum;
+				}
+    }
+	if(*(data_buf+2)==0X13)								//PID4
+	{
+		   				if(send_check == 0)
+				{
+					send_check = 1;
+					checkdata_to_send = *(data_buf+2);
+					checksum_to_send = sum;
+				}
+	}
+	if(*(data_buf+2)==0X14)								//PID5
+	{
+						if(send_check == 0)
+				{
+					send_check = 1;
+					checkdata_to_send = *(data_buf+2);
+					checksum_to_send = sum;
+				}
+	}
+	if(*(data_buf+2)==0X15)								//PID6
+	{
+						if(send_check == 0)
+				{
+					send_check = 1;
+					checkdata_to_send = *(data_buf+2);
+					checksum_to_send = sum;
+				}
+	}
+		
 			if(*(data_buf+2)==0X03)
 	{
 		GPIO_ToggleBits(GPIOA,GPIO_Pin_5);
 	}
+}
+void ANO_DT_Send_Check(u8 head, u8 check_sum)
+{
+		u8 sum = 0;
+	u8 i;
+	data_to_send[0]=0xAA;
+	data_to_send[1]=0xAA;
+	data_to_send[2]=0xEF;
+	data_to_send[3]=2;
+	data_to_send[4]=head;
+	data_to_send[5]=check_sum;
+	
+	
+
+	for(i=0;i<6;i++)
+		sum += data_to_send[i];
+	data_to_send[6]=sum;
+
+	Usart2_Send(data_to_send, 7);
 }
 //·¢ËÍPID
 void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float p2_i,float p2_d,float p3_p,float p3_i,float p3_d)
