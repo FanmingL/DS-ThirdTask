@@ -21,7 +21,7 @@ float exp_pitch=0.0f,exp_roll=0.0f;					//-8.3,-12.4
 float pitch_position_out=0,pitch_speed_out=0,
 			roll_position_out=0,roll_speed_out=0,
 			motor1_out=0,motor2_out=0,motor3_out=0,motor4_out=0;
-float RotateAngleNow=0,AngleWithGradiante=0;
+float RotateAngleNow=0,AngleWithGradianteNow=0;
 //第一题
 
 static void All_PID_Cal(float T)
@@ -76,35 +76,36 @@ static void exp_angle_update(float RotateAngle, float Exp_AngleWithGradiant)
 	exp_roll = fast_atan2(2*(q0*q1 + q2*q3),1 - 2*(q1*q1 + q2*q2)) *57.3f;
 	exp_pitch = asin(2*(q1*q3 - q0*q2)) *57.3f;
 }
-
+#define TASK1_ANGLEWITHGRIADIANTE 18.0f
 static void Task1_Motion(float T, u32 Sys_Time_Ms)
 {
 	static int mode =0;
 	if (mode==0)
 		{
-				exp_angle_update(0,LIMIT(AngleWithGradiante+2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
-				if (AngleWithGradiante>=12.0f*ANGLE_TO_RADIAN)mode=1-mode;
+				exp_angle_update(0,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+				if (AngleWithGradianteNow>=TASK1_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(0,LIMIT(AngleWithGradiante-2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
-			if (AngleWithGradiante<=-12.0f*ANGLE_TO_RADIAN)mode=1-mode;
+			exp_angle_update(0,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+			if (AngleWithGradianteNow<=-TASK1_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		All_PID_Cal(T);
 }
 //第二题与第一题用相同的代码
+#define TASK2_ANGLEWITHGRIADIANTE 13.0f
 static void Task2_Motion(float T, u32 Sys_Time_Ms)
 {
 	static int mode =0;
 	if (mode==0)
 		{
-				exp_angle_update(0,LIMIT(AngleWithGradiante+2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
-				if (AngleWithGradiante>=12.0f*ANGLE_TO_RADIAN)mode=1-mode;
+				exp_angle_update(0,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+				if (AngleWithGradianteNow>=TASK2_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(0,LIMIT(AngleWithGradiante-2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
-			if (AngleWithGradiante<=-12.0f*ANGLE_TO_RADIAN)mode=1-mode;
+			exp_angle_update(0,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+			if (AngleWithGradianteNow<=-TASK2_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		All_PID_Cal(T);
 }
@@ -114,28 +115,28 @@ static void Task3_Motion(float T, u32 Sys_Time_Ms)
 	static int mode =0;
 	if (mode==0)
 		{
-				exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradiante+2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
-				if (AngleWithGradiante>=AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
+				exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-AngleWithGradiantFromUsart*RAD_PER_DEG,AngleWithGradiantFromUsart*RAD_PER_DEG));
+				if (AngleWithGradianteNow>=AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradiante-2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
-			if (AngleWithGradiante<=-AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
+			exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-AngleWithGradiantFromUsart*RAD_PER_DEG,AngleWithGradiantFromUsart*RAD_PER_DEG));
+			if (AngleWithGradianteNow<=-AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		All_PID_Cal(T);
 }
 //第四题
 static void Task4_Motion(float T, u32 Sys_Time_Ms)
 {
-	exp_pitch=0.0f,exp_roll=0.0f;
-	pitch_position_out=-PID_calculate( T,            //周期（单位：秒）
-										0,				//前馈值
-										exp_pitch,				//期望值（设定值）
-										Pitch,			//反馈值（）
-										&PitchP_arg, //PID参数结构体
-										&PitchP_val,	//PID数据结构体
-										20		//integration limit，积分限幅
-										 );
+//	exp_pitch=0.0f,exp_roll=0.0f;
+//	pitch_position_out=-PID_calculate( T,            //周期（单位：秒）
+//										0,				//前馈值
+//										exp_pitch,				//期望值（设定值）
+//										Pitch,			//反馈值（）
+//										&PitchP_arg, //PID参数结构体
+//										&PitchP_val,	//PID数据结构体
+//										20		//integration limit，积分限幅
+//										 );
 		motor1_out=PID_calculate( T,            //周期（单位：秒）
 										0,				//前馈值
 										0,				//期望值（设定值）
@@ -145,14 +146,14 @@ static void Task4_Motion(float T, u32 Sys_Time_Ms)
 										10			//integration limit，积分限幅
 										 );
 		
-		roll_position_out=PID_calculate( T,            //周期（单位：秒）
-										0,				//前馈值
-										exp_roll,				//期望值（设定值）
-										Roll,			//反馈值（）
-										&PitchP_arg, //PID参数结构体
-										&RollP_val,	//PID数据结构体
-										20			//integration limit，积分限幅
-										 );
+//		roll_position_out=PID_calculate( T,            //周期（单位：秒）
+//										0,				//前馈值
+//										exp_roll,				//期望值（设定值）
+//										Roll,			//反馈值（）
+//										&PitchP_arg, //PID参数结构体
+//										&RollP_val,	//PID数据结构体
+//										20			//integration limit，积分限幅
+//										 );
 		motor2_out=PID_calculate( T,            //周期（单位：秒）
 										0,				//前馈值
 										0,				//期望值（设定值）
@@ -243,7 +244,7 @@ static void Task_2ms(void)
  	IMUupdate(0.5f *inner_loop_time,mpu6050.Gyro_deg.x, mpu6050.Gyro_deg.y, mpu6050.Gyro_deg.z, //更新IMU
 						mpu6050.Acc.x, mpu6050.Acc.y, mpu6050.Acc.z,&Roll,&Pitch,&Yaw);
 	RotateAngleNow			=	fast_atan2(ref_q[1],ref_q[2]);
-	AngleWithGradiante	=	acos(ref_q[0])*2;
+	AngleWithGradianteNow	=	acos(ref_q[0])*2;
 }
 
 static void Task_5ms(void)
