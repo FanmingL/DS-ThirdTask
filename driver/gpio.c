@@ -83,6 +83,10 @@ void SetAllPWM(short motor1_pwm,short motor2_pwm,short motor3_pwm,short motor4_p
 	{
 			MOTOR4_Positive();
 	}
+	motor1_out=motor1_pwm;
+	motor2_out=motor2_pwm;
+	motor3_out=motor3_pwm;
+	motor4_out=motor4_pwm;
 	SetPWMOut(motor1_pwm,motor2_pwm,motor3_pwm,motor4_pwm);
 
 }

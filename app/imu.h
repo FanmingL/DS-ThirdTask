@@ -16,7 +16,7 @@ typedef struct
 extern xyz_f_t reference_v,acc_3d_hg;
 void IMUupdate(float half_T,float gx, float gy, float gz, float ax, float ay, float az,float *rol,float *pit,float *yaw);
 extern float Roll,Pitch,Yaw;
-
+extern float ref_q[4];
 
 #endif
 

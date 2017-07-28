@@ -112,7 +112,8 @@ void DataTransferTask(u32 sys_time)
 {
 	if (sys_time%10==0){
 	ANO_DT_Send_Status(Roll,Pitch,Yaw,0,0,0);
-		}
+//	ANO_DT_Send_Status(exp_roll,exp_pitch,0,0,0,0);
+	}
 	else if((sys_time+1)%10==0){
 	ANO_DT_Send_Senser(mpu6050.Acc.x,mpu6050.Acc.y,mpu6050.Acc.z,mpu6050.Gyro.x,
 												mpu6050.Gyro.y,mpu6050.Gyro.z,
@@ -254,15 +255,15 @@ if(*(data_buf+2)==0X02)
 	}
 		if(*(data_buf+2)==0X10)								//PID1
     {
-        PitchP_arg.kp  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
-        PitchP_arg.ki  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
-        PitchP_arg.kd  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
-        PitchS_arg.kp = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
-        PitchS_arg.ki = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
-        PitchS_arg.kd = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
-        RollP_arg.kp 	= 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
-        RollP_arg.ki 	= 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
-        RollP_arg.kd 	= 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+        PitchP_arg.kp  = 0.01*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+        PitchP_arg.ki  = 0.01*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+        PitchP_arg.kd  = 0.01*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+        PitchS_arg.kp = 0.01*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+        PitchS_arg.ki = 0.01*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+        PitchS_arg.kd = 0.01*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+        RollP_arg.kp 	= 0.01*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
+        RollP_arg.ki 	= 0.01*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
+        RollP_arg.kd 	= 0.01*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
 				if(send_check == 0)
 				{
 					send_check = 1;
@@ -272,12 +273,12 @@ if(*(data_buf+2)==0X02)
     }
 		 if(*(data_buf+2)==0X11)								//PID2
     {
-        RollS_arg.kp  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
-        RollS_arg.ki  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
-        RollS_arg.kd  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
-        Motor_arg.kp = 0.001*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
-        Motor_arg.ki = 0.001*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
-        Motor_arg.kd = 0.001*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
+        RollS_arg.kp  = 0.01*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
+        RollS_arg.ki  = 0.01*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
+        RollS_arg.kd  = 0.01*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
+        Motor_arg.kp = 0.01*( (vs16)(*(data_buf+10)<<8)|*(data_buf+11) );
+        Motor_arg.ki = 0.01*( (vs16)(*(data_buf+12)<<8)|*(data_buf+13) );
+        Motor_arg.kd = 0.01*( (vs16)(*(data_buf+14)<<8)|*(data_buf+15) );
 						if(send_check == 0)
 				{
 					send_check = 1;
@@ -361,31 +362,31 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
 	data_to_send[_cnt++]=0;
 	
 	
-	_temp = p1_p * 1000;
+	_temp = p1_p * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p1_i  * 1000;
+	_temp = p1_i  * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p1_d  * 1000;
+	_temp = p1_d  * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p2_p  * 1000;
+	_temp = p2_p  * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p2_i  * 1000;
+	_temp = p2_i  * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p2_d * 1000;
+	_temp = p2_d * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p3_p  * 1000;
+	_temp = p3_p  * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p3_i  * 1000;
+	_temp = p3_i  * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p3_d * 1000;
+	_temp = p3_d * 100;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
 	

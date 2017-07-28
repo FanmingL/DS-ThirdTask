@@ -17,12 +17,12 @@ _PID_val_st RollS_val;
 _PID_val_st RollP_val;
 
 
-#define PositionPitch_P 1.0f
-#define PositionPitch_I 0.1f
-#define PositionPitch_D 0.0f
+#define PositionPitch_P 0.8f
+#define PositionPitch_I 3.0f
+#define PositionPitch_D 0.1f
 
-#define SpeedPitch_P 2.0f
-#define SpeedPitch_I 10.0f
+#define SpeedPitch_P 43.0f
+#define SpeedPitch_I 0.0f
 #define SpeedPitch_D 0.0f
 
 #define PositionRoll_P 0.0f
