@@ -21,6 +21,7 @@ float exp_pitch=0.0f,exp_roll=0.0f;					//-8.3,-12.4
 float pitch_position_out=0,pitch_speed_out=0,
 			roll_position_out=0,roll_speed_out=0,
 			motor1_out=0,motor2_out=0,motor3_out=0,motor4_out=0;
+float RotateAngleNow=0,AngleWithGradiante=0;
 //第一题
 
 static void All_PID_Cal(float T)
@@ -61,37 +62,67 @@ static void All_PID_Cal(float T)
 		SetAllPWM((short)motor1_out,(short)motor2_out,-(short)motor1_out,-(short)motor2_out);
 }
 
+static void exp_angle_update(float RotateAngle, float Exp_AngleWithGradiant)
+{
+	float q0 = my_cos(Exp_AngleWithGradiant/2.0f),
+				q1 = my_sin(Exp_AngleWithGradiant/2.0f)*my_sin(RotateAngle),
+				q2 = my_sin(Exp_AngleWithGradiant/2.0f)*my_cos(RotateAngle),
+				q3 = 0;
+	float norm = my_sqrt(q0*q0+q1*q1+q2*q2+q3*q3);
+	q0=q0/norm;
+	q1=q1/norm;
+	q2=q2/norm;
+	q3=q3/norm;
+	exp_roll = fast_atan2(2*(q0*q1 + q2*q3),1 - 2*(q1*q1 + q2*q2)) *57.3f;
+	exp_pitch = asin(2*(q1*q3 - q0*q2)) *57.3f;
+}
+
 static void Task1_Motion(float T, u32 Sys_Time_Ms)
 {
 	static int mode =0;
 	if (mode==0)
 		{
-				exp_pitch=LIMIT(Pitch+3.0f,-15.0f,15.0f);
-				if (Pitch>=14.5f&&my_abs(mpu6050.Gyro_deg.y)<=100)
-				{
-					mode=1-mode;
-				}
+				exp_angle_update(0,LIMIT(AngleWithGradiante+2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
+				if (AngleWithGradiante>=12.0f*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		else	
 		{
-			exp_pitch=LIMIT(Pitch-3.0f,-15.0f,15.0f);
-			if (Pitch<=-14.5f&&my_abs(mpu6050.Gyro_deg.y)<=100)
-			{
-				mode=1-mode;
-			}	
+			exp_angle_update(0,LIMIT(AngleWithGradiante-2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
+			if (AngleWithGradiante<=-12.0f*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		All_PID_Cal(T);
-	
 }
 //第二题与第一题用相同的代码
 static void Task2_Motion(float T, u32 Sys_Time_Ms)
 {
-	Task1_Motion(T,Sys_Time_Ms);
+	static int mode =0;
+	if (mode==0)
+		{
+				exp_angle_update(0,LIMIT(AngleWithGradiante+2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
+				if (AngleWithGradiante>=12.0f*ANGLE_TO_RADIAN)mode=1-mode;
+		}
+		else	
+		{
+			exp_angle_update(0,LIMIT(AngleWithGradiante-2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
+			if (AngleWithGradiante<=-12.0f*ANGLE_TO_RADIAN)mode=1-mode;
+		}
+		All_PID_Cal(T);
 }
 //第三题
 static void Task3_Motion(float T, u32 Sys_Time_Ms)
 {
-
+	static int mode =0;
+	if (mode==0)
+		{
+				exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradiante+2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
+				if (AngleWithGradiante>=AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
+		}
+		else	
+		{
+			exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradiante-2.0f*RAD_PER_DEG,-15.0f*RAD_PER_DEG,15.0f*RAD_PER_DEG));
+			if (AngleWithGradiante<=-AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
+		}
+		All_PID_Cal(T);
 }
 //第四题
 static void Task4_Motion(float T, u32 Sys_Time_Ms)
@@ -133,33 +164,19 @@ static void Task4_Motion(float T, u32 Sys_Time_Ms)
 		SetAllPWM((short)motor1_out,(short)motor2_out,-(short)motor1_out,-(short)motor2_out);
 }
 
-#define EXP_ROTATEANGLE 10.5f/180.0f*3.1415926f
-static void exp_angle_update(float RotateAngle)
-{
-	float q0 = my_cos(EXP_ROTATEANGLE/2.0f),
-				q1 = my_sin(EXP_ROTATEANGLE/2.0f)*my_sin(RotateAngle),
-				q2 = my_sin(EXP_ROTATEANGLE/2.0f)*my_cos(RotateAngle),
-				q3 = 0;
-	float norm = my_sqrt(q0*q0+q1*q1+q2*q2+q3*q3);
-	q0=q0/norm;
-	q1=q1/norm;
-	q2=q2/norm;
-	q3=q3/norm;
-	exp_roll = fast_atan2(2*(q0*q1 + q2*q3),1 - 2*(q1*q1 + q2*q2)) *57.3f;
-	exp_pitch = asin(2*(q1*q3 - q0*q2)) *57.3f;
-}
+
+#define EXP_ROTATEANGLE (10.5f*RAD_PER_DEG)
 //第五题
 static void Task5_Motion(float T, u32 Sys_Time_Ms)
 {
-	float RotateAngleNow=fast_atan2(ref_q[1],ref_q[2]);
-	exp_angle_update(RotateAngleNow+0.5f/180.0f*3.1415926f);
+	exp_angle_update(RotateAngleNow+0.5f*RAD_PER_DEG,EXP_ROTATEANGLE);
 	All_PID_Cal(T);
-	
 }
 //第六题
 static void Task6_Motion(float T, u32 Sys_Time_Ms)
 {
-
+	exp_angle_update(RotateAngleNow+0.5f*RAD_PER_DEG,EXP_ROTATEANGLE);
+	All_PID_Cal(T);
 }
 //测试电机转速以及转动方向
 static void Test_Motion(float T, u32 Sys_Time_Ms)
@@ -225,6 +242,8 @@ static void Task_2ms(void)
 	MPU6050_Data_Prepare( inner_loop_time );
  	IMUupdate(0.5f *inner_loop_time,mpu6050.Gyro_deg.x, mpu6050.Gyro_deg.y, mpu6050.Gyro_deg.z, //更新IMU
 						mpu6050.Acc.x, mpu6050.Acc.y, mpu6050.Acc.z,&Roll,&Pitch,&Yaw);
+	RotateAngleNow			=	fast_atan2(ref_q[1],ref_q[2]);
+	AngleWithGradiante	=	acos(ref_q[0])*2;
 }
 
 static void Task_5ms(void)

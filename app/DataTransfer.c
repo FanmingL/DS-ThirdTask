@@ -111,7 +111,7 @@ void ANO_DT_Send_Senser(s16 a_x,s16 a_y,s16 a_z,s16 g_x,s16 g_y,s16 g_z,s16 m_x,
 void DataTransferTask(u32 sys_time)
 {
 	if (sys_time%10==0){
-	ANO_DT_Send_Status(Roll,Pitch,Yaw,0,0,0);
+	ANO_DT_Send_Status(Roll,Pitch,RotateAngleNow,0,0,0);
 //	ANO_DT_Send_Status(exp_roll,exp_pitch,0,0,0,0);
 	}
 	else if((sys_time+1)%10==0){
@@ -197,6 +197,7 @@ void Usart2_DataPrepare(u8 data)
 		state = 0;
 
 }
+float AngleWithGradiantFromUsart=0.0f,ExpAngleFromUsart=0.0f;
 enum PendulumMode NS=Stop;										//NS用于切换模式，Stop为停止模式，Task1到Task6分别为题1至题2
 void Data_Receive_Anl(u8 *data_buf,u8 num)
 {
@@ -287,7 +288,13 @@ if(*(data_buf+2)==0X02)
 				}
     }
 	
-    
+    	if(*(data_buf+2)==0X03)
+	{
+
+		ExpAngleFromUsart = ((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/100.0f ;
+		AngleWithGradiantFromUsart = ((vs16)(*(data_buf+10)<<8)|*(data_buf+11))/100.0f ;
+		
+	}
     if(*(data_buf+2)==0X12)								//PID3
     {	
        	if(send_check == 0)

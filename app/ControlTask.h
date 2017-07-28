@@ -3,6 +3,6 @@
 
 void ControlLoop(void);
 extern float	motor1_out,motor2_out,motor3_out,motor4_out;
-extern float exp_pitch,exp_roll;
+extern float exp_pitch,exp_roll,RotateAngleNow;
 #endif
 
