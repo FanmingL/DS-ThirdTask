@@ -115,7 +115,7 @@ void DataTransferTask(u32 sys_time)
 //	ANO_DT_Send_Status(exp_roll,exp_pitch,0,0,0,0);
 	}
 	else if((sys_time+1)%10==0){
-	ANO_DT_Send_Senser((s16)exp_pitch,(s16)exp_roll,(s16)(RotateAngleNow*57.3f),mpu6050.Gyro.x,
+	ANO_DT_Send_Senser((s16)exp_pitch,(s16)(exp_roll),(s16)(RotateAngleNow*57.3f),mpu6050.Gyro.x,
 												mpu6050.Gyro.y,mpu6050.Gyro.z,
 												ak8975.Mag_Val.x,ak8975.Mag_Val.y,ak8975.Mag_Val.z);//mpu6050.Acc.x,mpu6050.Acc.y,mpu6050.Acc.z,mpu6050.Gyro.x
 	

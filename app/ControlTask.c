@@ -22,7 +22,7 @@ float exp_pitch=0.0f,exp_roll=0.0f;					//-8.3,-12.4
 float pitch_position_out=0,pitch_speed_out=0,
 			roll_position_out=0,roll_speed_out=0,
 			motor1_out=0,motor2_out=0,motor3_out=0,motor4_out=0;
-float RotateAngleNow=0,AngleWithGradianteNow=0;
+float RotateAngleNow=0,AngleWithGradianteNow=0,RotateAngleNowTest=0;
 //µÚÒ»Ìâ
 
 static void All_PID_Cal(float T)
@@ -103,13 +103,13 @@ static void Task2_Motion(float T, u32 Sys_Time_Ms)
 		static int mode =0;
 		if (mode==0)
 		{
-				exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
-				if (AngleWithGradianteNow>=TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
+				exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+				if (AngleWithGradianteNow>=TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
-			if (AngleWithGradianteNow<=-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
+			exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+			if (AngleWithGradianteNow<=-TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
 		}
 		All_PID_Cal(T);
 }
@@ -119,12 +119,12 @@ static void Task3_Motion(float T, u32 Sys_Time_Ms)
 	static int mode =0;
 	if (mode==0)
 		{
-				exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-AngleWithGradiantFromUsart*RAD_PER_DEG,AngleWithGradiantFromUsart*RAD_PER_DEG));
+				exp_angle_update(ExpAngleFromUsart*RAD_PER_DEG,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-AngleWithGradiantFromUsart*RAD_PER_DEG,AngleWithGradiantFromUsart*RAD_PER_DEG));
 				if (AngleWithGradianteNow>=AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(ExpAngleFromUsart,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-AngleWithGradiantFromUsart*RAD_PER_DEG,AngleWithGradiantFromUsart*RAD_PER_DEG));
+			exp_angle_update(ExpAngleFromUsart*RAD_PER_DEG,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-AngleWithGradiantFromUsart*RAD_PER_DEG,AngleWithGradiantFromUsart*RAD_PER_DEG));
 			if (AngleWithGradianteNow<=-AngleWithGradiantFromUsart*ANGLE_TO_RADIAN)mode=1-mode;
 		}
 		All_PID_Cal(T);
@@ -267,10 +267,18 @@ static void Task_2ms(void)
 			RotateAngleNow+=MY_PPPIII;
 			AngleWithGradianteNow=-AngleWithGradianteNow;
 		}
-	
-	
+		RotateAngleNowTest	=	-(atan(Pitch/Roll))+MY_PPPIII_HALF;
 	}
+//}
+//	else
+//	{	
+//		RotateAngleNow	=	(atan(Pitch/Roll));
+
+//	
+//	}
 }
+
+	
 
 static void Task_5ms(void)
 {	
