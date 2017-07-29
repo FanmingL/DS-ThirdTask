@@ -114,6 +114,7 @@ static void Task2_Motion(float T, u32 Sys_Time_Ms)
 		All_PID_Cal(T);
 }
 //第三题
+//35度是正前方。
 static void Task3_Motion(float T, u32 Sys_Time_Ms)
 {
 	static int mode =0;
@@ -170,7 +171,7 @@ static void Task4_Motion(float T, u32 Sys_Time_Ms)
 }
 
 
-#define EXP_ROTATEANGLE (9.25f*RAD_PER_DEG)
+#define EXP_ROTATEANGLE (9.0f*RAD_PER_DEG)
 //第五题
 static void Task5_Motion(float T, u32 Sys_Time_Ms)
 {
@@ -180,7 +181,7 @@ static void Task5_Motion(float T, u32 Sys_Time_Ms)
 //第六题
 static void Task6_Motion(float T, u32 Sys_Time_Ms)
 {
-	exp_angle_update(RotateAngleNow+0.5f*RAD_PER_DEG,EXP_ROTATEANGLE);
+	exp_angle_update(RotateAngleNow-0.5f*RAD_PER_DEG,EXP_ROTATEANGLE);
 	All_PID_Cal(T);
 }
 //测试电机转速以及转动方向
