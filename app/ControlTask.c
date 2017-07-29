@@ -80,36 +80,36 @@ static void exp_angle_update(float RotateAngle, float Exp_AngleWithGradiant)
 	exp_pitch = -asin(2*(q1*q3 - q0*q2)) *57.3f;
 }
 
-#define TASK1_ANGLEWITHGRIADIANTE 13.0f
+#define TASK1_ANGLEWITHGRIADIANTE 17.0f
 static void Task1_Motion(float T, u32 Sys_Time_Ms)
 {
 	static int mode =0;
 	if (mode==0)
 		{
-				exp_angle_update(-164.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,4.0f*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+				exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
 				if (AngleWithGradianteNow>=TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(-164.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,4.0f*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
-			if (AngleWithGradianteNow<=4.0f*RAD_PER_DEG)mode=1-mode;
+			exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+			if (AngleWithGradianteNow<=-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
 		}
-		All_PID_Cal(T);
+				All_PID_Cal(T);
 }
 //第二题与第一题用相同的代码
 #define TASK2_ANGLEWITHGRIADIANTE 13.0f
 static void Task2_Motion(float T, u32 Sys_Time_Ms)
 {
-	static int mode =0;
-	if (mode==0)
+		static int mode =0;
+		if (mode==0)
 		{
-				exp_angle_update(0,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
-				if (AngleWithGradianteNow>=TASK2_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
+				exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+				if (AngleWithGradianteNow>=TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(0,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK2_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
-			if (AngleWithGradianteNow<=-TASK2_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
+			exp_angle_update(-174.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+			if (AngleWithGradianteNow<=-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
 		}
 		All_PID_Cal(T);
 }
@@ -247,8 +247,10 @@ static void Task_2ms(void)
 	MPU6050_Data_Prepare( inner_loop_time );
  	IMUupdate(0.5f *inner_loop_time,mpu6050.Gyro_deg.x, mpu6050.Gyro_deg.y, mpu6050.Gyro_deg.z, //更新IMU
 						mpu6050.Acc.x, mpu6050.Acc.y, mpu6050.Acc.z,&Roll,&Pitch,&Yaw);
-	RotateAngleNow			=	(fast_atan2(ref_q[2],ref_q[1]))+Temp;
+
 	AngleWithGradianteNow	=	asin(my_sqrt(ref_q[1]*ref_q[1]+ref_q[2]*ref_q[2]))*2;
+	if (NS==Task5||NS==Task6){
+	RotateAngleNow			=	(fast_atan2(ref_q[2],ref_q[1]))+Temp;
 	if ((RotateAngleLast-RotateAngleNow)>330.0f*RAD_PER_DEG){
 		RotateAngleNow+=360.0f*RAD_PER_DEG;
 		Temp+=360.0f*RAD_PER_DEG;
@@ -258,6 +260,16 @@ static void Task_2ms(void)
 		Temp-=360.0f*RAD_PER_DEG;
 	}
 	RotateAngleLast=RotateAngleNow;
+}else
+	{
+		RotateAngleNow	=	(fast_atan2(ref_q[2],ref_q[1]));
+		if (RotateAngleNow<0){
+			RotateAngleNow+=MY_PPPIII;
+			AngleWithGradianteNow=-AngleWithGradianteNow;
+		}
+	
+	
+	}
 }
 
 static void Task_5ms(void)
