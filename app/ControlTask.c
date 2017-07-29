@@ -16,6 +16,7 @@ pitch<0 	1	->								<-3			pitch>0
 
 
 */
+#define HEIGHT 73.727f
 u32 SystemTimeMs=0;
 float exp_pitch=0.0f,exp_roll=0.0f;					//-8.3,-12.4
 float pitch_position_out=0,pitch_speed_out=0,
@@ -64,31 +65,34 @@ static void All_PID_Cal(float T)
 
 static void exp_angle_update(float RotateAngle, float Exp_AngleWithGradiant)
 {
-	float q0 = my_cos(Exp_AngleWithGradiant/2.0f),
-				q1 = my_sin(Exp_AngleWithGradiant/2.0f)*my_sin(RotateAngle),
-				q2 = my_sin(Exp_AngleWithGradiant/2.0f)*my_cos(RotateAngle),
+	float q0,q1,q2,q3,norm;
+	RotateAngle=(-RotateAngle+MY_PPPIII_HALF);
+				q0 = my_cos(Exp_AngleWithGradiant/2.0f),
+				q1 = my_sin(Exp_AngleWithGradiant/2.0f)*cos(RotateAngle),
+				q2 = my_sin(Exp_AngleWithGradiant/2.0f)*sin(RotateAngle),
 				q3 = 0;
-	float norm = my_sqrt(q0*q0+q1*q1+q2*q2+q3*q3);
+	 norm = my_sqrt(q0*q0+q1*q1+q2*q2+q3*q3);
 	q0=q0/norm;
 	q1=q1/norm;
 	q2=q2/norm;
 	q3=q3/norm;
 	exp_roll = fast_atan2(2*(q0*q1 + q2*q3),1 - 2*(q1*q1 + q2*q2)) *57.3f;
-	exp_pitch = asin(2*(q1*q3 - q0*q2)) *57.3f;
+	exp_pitch = -asin(2*(q1*q3 - q0*q2)) *57.3f;
 }
-#define TASK1_ANGLEWITHGRIADIANTE 18.0f
+
+#define TASK1_ANGLEWITHGRIADIANTE 13.0f
 static void Task1_Motion(float T, u32 Sys_Time_Ms)
 {
 	static int mode =0;
 	if (mode==0)
 		{
-				exp_angle_update(0,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
-				if (AngleWithGradianteNow>=TASK1_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
+				exp_angle_update(-164.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow+2.0f*RAD_PER_DEG,4.0f*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+				if (AngleWithGradianteNow>=TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG)mode=1-mode;
 		}
 		else	
 		{
-			exp_angle_update(0,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,-TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
-			if (AngleWithGradianteNow<=-TASK1_ANGLEWITHGRIADIANTE*ANGLE_TO_RADIAN)mode=1-mode;
+			exp_angle_update(-164.0f*RAD_PER_DEG,LIMIT(AngleWithGradianteNow-2.0f*RAD_PER_DEG,4.0f*RAD_PER_DEG,TASK1_ANGLEWITHGRIADIANTE*RAD_PER_DEG));
+			if (AngleWithGradianteNow<=4.0f*RAD_PER_DEG)mode=1-mode;
 		}
 		All_PID_Cal(T);
 }
@@ -166,7 +170,7 @@ static void Task4_Motion(float T, u32 Sys_Time_Ms)
 }
 
 
-#define EXP_ROTATEANGLE (10.5f*RAD_PER_DEG)
+#define EXP_ROTATEANGLE (9.25f*RAD_PER_DEG)
 //第五题
 static void Task5_Motion(float T, u32 Sys_Time_Ms)
 {
@@ -235,16 +239,25 @@ static void ControlAngle(float T,u32 Sys_Time_Ms)
 	}
 }
 
-
 static void Task_2ms(void)
 {
 	float inner_loop_time = GetInnerLoop(Task_2ms_Time)/1000000.0f;
+	static float RotateAngleLast=0.0f,Temp=0.0f;
 	MPU6050_Read();
 	MPU6050_Data_Prepare( inner_loop_time );
  	IMUupdate(0.5f *inner_loop_time,mpu6050.Gyro_deg.x, mpu6050.Gyro_deg.y, mpu6050.Gyro_deg.z, //更新IMU
 						mpu6050.Acc.x, mpu6050.Acc.y, mpu6050.Acc.z,&Roll,&Pitch,&Yaw);
-	RotateAngleNow			=	fast_atan2(ref_q[1],ref_q[2]);
-	AngleWithGradianteNow	=	acos(ref_q[0])*2;
+	RotateAngleNow			=	(fast_atan2(ref_q[2],ref_q[1]))+Temp;
+	AngleWithGradianteNow	=	asin(my_sqrt(ref_q[1]*ref_q[1]+ref_q[2]*ref_q[2]))*2;
+	if ((RotateAngleLast-RotateAngleNow)>330.0f*RAD_PER_DEG){
+		RotateAngleNow+=360.0f*RAD_PER_DEG;
+		Temp+=360.0f*RAD_PER_DEG;
+	}else if ((RotateAngleLast-RotateAngleNow)<-330.0f*RAD_PER_DEG)
+	{
+		RotateAngleNow-=360.0f*RAD_PER_DEG;
+		Temp-=360.0f*RAD_PER_DEG;
+	}
+	RotateAngleLast=RotateAngleNow;
 }
 
 static void Task_5ms(void)
