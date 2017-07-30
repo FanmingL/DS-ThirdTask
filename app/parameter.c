@@ -21,9 +21,9 @@ _PID_val_st RollP_val;
 #define PositionPitch_I 3.0f
 #define PositionPitch_D 0.1f
 
-#define SpeedPitch_P 55.0f
+#define SpeedPitch_P 60.0f
 #define SpeedPitch_I 0.0f
-#define SpeedPitch_D 0.0f
+#define SpeedPitch_D 3.0f
 
 #define PositionRoll_P 0.0f
 #define PositionRoll_I 0.0f

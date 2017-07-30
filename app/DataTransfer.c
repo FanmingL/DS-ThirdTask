@@ -291,7 +291,7 @@ if(*(data_buf+2)==0X02)
     	if(*(data_buf+2)==0X03)
 	{
 
-		ExpAngleFromUsart = ((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/100.0f ;
+		ExpAngleFromUsart = ((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/100.0f-35.0f;
 		AngleWithGradiantFromUsart = ((vs16)(*(data_buf+10)<<8)|*(data_buf+11))/100.0f ;
 		
 	}

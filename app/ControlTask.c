@@ -133,6 +133,7 @@ static void Task3_Motion(float T, u32 Sys_Time_Ms)
 //第四题
 static void Task4_Motion(float T, u32 Sys_Time_Ms)
 {
+//	PitchS_arg.kd=2.0f;
 //	exp_pitch=0.0f,exp_roll=0.0f;
 //	pitch_position_out=-PID_calculate( T,            //周期（单位：秒）
 //										0,				//前馈值
@@ -175,14 +176,18 @@ static void Task4_Motion(float T, u32 Sys_Time_Ms)
 //第五题
 static void Task5_Motion(float T, u32 Sys_Time_Ms)
 {
+	//PitchS_arg.kd=0.0f;
 	exp_angle_update(RotateAngleNow+0.5f*RAD_PER_DEG,EXP_ROTATEANGLE);
 	All_PID_Cal(T);
+//	Para_ResetToFactorySetup();
 }
 //第六题
 static void Task6_Motion(float T, u32 Sys_Time_Ms)
 {
-	exp_angle_update(RotateAngleNow-0.5f*RAD_PER_DEG,EXP_ROTATEANGLE);
+	//PitchS_arg.kd=0.0f;
+	exp_angle_update(RotateAngleNow+0.5f*RAD_PER_DEG,EXP_ROTATEANGLE);
 	All_PID_Cal(T);
+	//Para_ResetToFactorySetup();
 }
 //测试电机转速以及转动方向
 static void Test_Motion(float T, u32 Sys_Time_Ms)
